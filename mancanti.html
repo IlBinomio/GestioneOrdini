@@ -24,7 +24,6 @@ a.home{display:inline-block;margin:10px 0;color:#fff;background:#2d89ef;padding:
 <button type="submit" name="action" value="comprato" class="comprato">
     {% if m[3]==1 %}❌ Toglia Spunta{% else %}✔ Spunta{% endif %}
 </button>
-
 <button type="submit" name="action" value="elimina" class="elimina">✖ Elimina</button>
 <span>Ordine {{m[1]}} — {{m[2]}} {% if m[3]==1 %}(✔ già comprato){% endif %}</span>
 </form>
