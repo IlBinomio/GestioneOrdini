@@ -24,20 +24,16 @@ function printQR() {
 <body>
 
 <a class="home" href="/">🏠 Home</a>
+<a style="display:inline-block;margin:6px 0;color:white;background:#dc3545;padding:6px 10px;border-radius:6px;text-decoration:none" 
+href="/delete_order/{{codice}}">🗑️ Rimuovi Ordine</a>
 
 <div class="card">
 <h2>🧾 Ordine {{codice}}</h2>
 <p><b>{{ordine[1]}} {{ordine[2]}}</b></p>
 <p>{{ordine[3]}}</p>
 <p>{{ordine[4]}}</p>
-<a class="home" href="/">🏠 Home</a>
-<a style="display:inline-block;margin:6px 0;color:white;background:#dc3545;padding:6px 10px;border-radius:6px;text-decoration:none" 
-href="/delete_order/{{codice}}">🗑️ Rimuovi Ordine</a>
 
-{% if ordine[5] %}
-<img src="/{{ordine[5]}}" width="200">
-{% endif %}
-<img id="qr_img" src="/static/qr/{{codice}}.png" width="160">
+<img id="qr_img" src="data:image/png;base64,{{qr_b64}}" width="160">
 <button onclick="printQR()">🖨️ Stampa QR</button>
 </div>
 
