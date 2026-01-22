@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gestionale Ordini</title>
+<style>
+body{font-family:Arial;background:#f2f2f2}
+.box{background:white;padding:20px;margin:20px auto;width:420px;border-radius:12px}
+input,button{width:100%;padding:8px;margin:6px 0;border-radius:6px;border:1px solid #ccc}
+button{background:#2d89ef;color:white;font-weight:bold}
+a{display:block;padding:6px;text-decoration:none;text-align:center;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>📦 Nuovo Ordine</h2>
+<form method="POST" enctype="multipart/form-data">
+<input name="nome" placeholder="Nome" required>
+<input name="cognome" placeholder="Cognome" required>
+<input name="tipo" placeholder="Tipo ordine" required>
+<input name="descrizione" placeholder="Descrizione">
+<input type="file" name="foto">
+<button>Crea Ordine</button>
+</form>
+<a href="/mancanti">📋 Lista Oggetti Mancanti</a>
+</div>
+
+<div class="box">
+<h2>🔍 Cerca Ordini</h2>
+<form action="/search" method="POST">
+<input name="termine" placeholder="Nome, Cognome o Codice ordine">
+<button>Cerca</button>
+</form>
+
+{% if risultati %}
+{% for r in risultati %}
+<a href="/order/{{r[0]}}">👉 {{r[1]}} {{r[2]}} — {{r[3]}} ({{r[0]}})</a>
+{% endfor %}
+{% endif %}
+</div>
+
+
+</body>
+</html>

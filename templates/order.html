@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ordine {{codice}}</title>
+<style>
+body{font-family:Arial;background:#eef2f7}
+.card{background:white;padding:20px;margin:20px auto;width:520px;border-radius:14px}
+input,button{width:100%;padding:8px;margin:6px 0;border-radius:6px;border:1px solid #ccc}
+button{background:#28a745;color:white;font-weight:bold}
+img{border-radius:10px;margin:6px}
+.list{background:#f7f7f7;padding:10px;border-radius:8px}
+a.home{display:inline-block;margin:10px 0;color:#fff;background:#2d89ef;padding:8px 12px;border-radius:6px;text-decoration:none}
+</style>
+<script>
+function printQR() {
+    var qr = document.getElementById("qr_img");
+    var w = window.open("");
+    w.document.write(qr.outerHTML);
+    w.print();
+    w.close();
+}
+</script>
+</head>
+<body>
+
+<a class="home" href="/">🏠 Home</a>
+
+<div class="card">
+<h2>🧾 Ordine {{codice}}</h2>
+<p><b>{{ordine[1]}} {{ordine[2]}}</b></p>
+<p>{{ordine[3]}}</p>
+<p>{{ordine[4]}}</p>
+<a class="home" href="/">🏠 Home</a>
+<a style="display:inline-block;margin:6px 0;color:white;background:#dc3545;padding:6px 10px;border-radius:6px;text-decoration:none" 
+href="/delete_order/{{codice}}">🗑️ Rimuovi Ordine</a>
+
+{% if ordine[5] %}
+<img src="/{{ordine[5]}}" width="200">
+{% endif %}
+<img id="qr_img" src="/static/qr/{{codice}}.png" width="160">
+<button onclick="printQR()">🖨️ Stampa QR</button>
+</div>
+
+<div class="card">
+<h3>🔧 Oggetti Mancanti per questo ordine</h3>
+
+<form method="POST">
+<input name="oggetto" placeholder="Nome oggetto" required>
+<button>Aggiungi</button>
+</form>
+
+<div class="list">
+{% for m in mancanti %}
+<p>🔹 {{m[2]}} {% if m[3]==1 %}(✔ comprato){% endif %}</p>
+{% endfor %}
+</div>
+</div>
+
+</body>
+</html>
