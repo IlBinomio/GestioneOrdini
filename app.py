@@ -1,12 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
-import sqlite3, qrcode, os
+import sqlite3, qrcode
+from io import BytesIO
+import base64
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "static/uploads"
-QR_FOLDER = "static/qr"
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(QR_FOLDER, exist_ok=True)
 
 # --- Database ordini ---
 def db_ordini():
@@ -17,8 +14,7 @@ def db_ordini():
             nome TEXT,
             cognome TEXT,
             tipo TEXT,
-            descrizione TEXT,
-            foto TEXT
+            descrizione TEXT
         )
     """)
     return con
@@ -45,33 +41,14 @@ def home():
         tipo = request.form["tipo"]
         descrizione = request.form["descrizione"]
 
-        foto_path = ""
-        foto = request.files["foto"]
-        if foto and foto.filename != "":
-            # Salveremo la foto con un nome temporaneo, il codice reale si conosce solo dopo inserimento DB
-            foto_path = "temp.jpg"
-            foto.save(foto_path)
-
-        # Inseriamo l'ordine e otteniamo il codice incrementale
         con = db_ordini()
         cur = con.cursor()
-        cur.execute("INSERT INTO ordini (nome, cognome, tipo, descrizione, foto) VALUES (?,?,?,?,?)",
-                    (nome, cognome, tipo, descrizione, foto_path))
+        cur.execute("INSERT INTO ordini (nome, cognome, tipo, descrizione) VALUES (?,?,?,?)",
+                    (nome, cognome, tipo, descrizione))
         con.commit()
-        codice = cur.lastrowid  # codice numerico incrementale
-
-        # Rinominiamo la foto con il codice corretto
-        if foto_path != "":  
-            nuovo_path = f"{UPLOAD_FOLDER}/{codice}.jpg"
-            os.rename(foto_path, nuovo_path)
-            con.execute("UPDATE ordini SET foto=? WHERE codice=?", (nuovo_path, codice))
-            con.commit()
-
-        # Generiamo il QR code
-        qr = qrcode.make(f"http://127.0.0.1:5000/order/{codice}")
-        qr.save(f"{QR_FOLDER}/{codice}.png")
-
+        codice = cur.lastrowid
         con.close()
+
         return redirect(url_for("order", codice=codice))
 
     return render_template("home.html")
@@ -83,6 +60,7 @@ def order(codice):
     ordine = con.execute("SELECT * FROM ordini WHERE codice=?",(codice,)).fetchone()
     con.close()
 
+    # aggiungi oggetto mancante
     if request.method == "POST":
         oggetto = request.form["oggetto"]
         if oggetto.strip() != "":
@@ -91,13 +69,20 @@ def order(codice):
             con_m.commit()
             con_m.close()
 
+    # prendi oggetti mancanti
     con_m = db_mancanti()
     mancanti = con_m.execute("SELECT * FROM mancanti WHERE codice=?",(codice,)).fetchall()
     con_m.close()
 
-    return render_template("order.html", ordine=ordine, codice=codice, mancanti=mancanti)
+    # genera QR code in memoria
+    qr_img = qrcode.make(f"http://127.0.0.1:5000/order/{codice}")
+    buffer = BytesIO()
+    qr_img.save(buffer, format="PNG")
+    qr_b64 = base64.b64encode(buffer.getvalue()).decode()
 
-# --- Rimuovi ordine ---
+    return render_template("order.html", ordine=ordine, codice=codice, mancanti=mancanti, qr_b64=qr_b64)
+
+# --- Rimuovi ordine completo ---
 @app.route("/delete_order/<int:codice>")
 def delete_order(codice):
     con = db_ordini()
