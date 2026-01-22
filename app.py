@@ -32,9 +32,9 @@ def db_mancanti():
     """)
     return con
 
-# --- Home ---
+# --- Main Page (ex Home) ---
 @app.route("/", methods=["GET","POST"])
-def home():
+def main():
     if request.method == "POST":
         nome = request.form["nome"]
         cognome = request.form["cognome"]
@@ -51,7 +51,7 @@ def home():
 
         return redirect(url_for("order", codice=codice))
 
-    return render_template("home.html")
+    return render_template("main.html")
 
 # --- Pagina ordine ---
 @app.route("/order/<int:codice>", methods=["GET","POST"])
@@ -95,7 +95,7 @@ def delete_order(codice):
     con_m.commit()
     con_m.close()
 
-    return redirect(url_for("home"))
+    return redirect(url_for("main"))
 
 # --- Lista globale oggetti mancanti ---
 @app.route("/mancanti", methods=["GET","POST"])
@@ -125,7 +125,7 @@ def search():
         (f"%{termine}%", f"%{termine}%", f"%{termine}%")
     ).fetchall()
     con.close()
-    return render_template("home.html", risultati=res)
+    return render_template("main.html", risultati=res)
 
 if __name__ == "__main__":
     app.run(debug=True)
