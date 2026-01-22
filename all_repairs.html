@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Lista Riparazioni</title>
+<style>
+body{font-family:Arial;background:#eef2f7}
+.card{background:white;padding:20px;margin:20px auto;width:520px;border-radius:14px}
+a.home{display:inline-block;margin:10px 0;color:#fff;background:#2d89ef;padding:8px 12px;border-radius:6px;text-decoration:none}
+.list{background:#f7f7f7;padding:10px;border-radius:8px}
+</style>
+</head>
+<body>
+
+<a class="home" href="/">🏠 Home</a>
+
+<div class="card">
+<h2>📋 Tutte le riparazioni</h2>
+
+<div class="list">
+{% for r in rip %}
+<p>🔹 Ordine {{r[1]}} — {{r[2]}} — {{r[3]}}</p>
+{% endfor %}
+</div>
+</div>
+
+</body>
+</html>

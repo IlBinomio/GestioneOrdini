@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Lista Oggetti Mancanti</title>
+<style>
+body{font-family:Arial;background:#eef2f7}
+.card{background:white;padding:20px;margin:20px auto;width:520px;border-radius:14px}
+button{padding:6px 10px;margin:2px;border-radius:6px;border:none;color:white;font-weight:bold}
+button.comprato{background:#28a745}
+button.elimina{background:#dc3545}
+a.home{display:inline-block;margin:10px 0;color:#fff;background:#2d89ef;padding:8px 12px;border-radius:6px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<a class="home" href="/">🏠 Home</a>
+
+<div class="card">
+<h2>📋 Tutti gli Oggetti Mancanti</h2>
+
+{% for m in mancanti %}
+<form method="POST" style="display:inline;">
+<input type="hidden" name="id" value="{{m[0]}}">
+<button type="submit" name="action" value="comprato" class="comprato">
+    {% if m[3]==1 %}❌ Toglia Spunta{% else %}✔ Spunta{% endif %}
+</button>
+
+<button type="submit" name="action" value="elimina" class="elimina">✖ Elimina</button>
+<span>Ordine {{m[1]}} — {{m[2]}} {% if m[3]==1 %}(✔ già comprato){% endif %}</span>
+</form>
+<br>
+{% endfor %}
+
+</div>
+
+</body>
+</html>
